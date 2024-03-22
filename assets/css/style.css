@@ -14,10 +14,6 @@ body {
   position: relative;
   background: transparent;
 }
-.header1{
-  text-align:center;
-
-}
 
 body::before {
   content: "";
@@ -35,6 +31,7 @@ body::before {
     background-attachment: fixed;
   }
 }
+
 
 a {
   color: #12d640;
