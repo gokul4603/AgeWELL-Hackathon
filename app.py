@@ -49,7 +49,7 @@ def register_user():
 
 @app.route('/another_page')
 def another_page():
-    return render_template("goto.html")
+    return render_template("index.html")
 
 # @app.route('/custom_html/Users\kisho\OneDrive\Documents\GitHub\AgeWELL-Hackathon:index.html>')
 # def custom_html():
