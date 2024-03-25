@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medication Reminder</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: rgb(255, 255, 255);
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+    .container {
+        text-align: center;
+        margin-top: 50px;
+    }
+    input[type=text], input[type=time] {
+        width: 80%;
+        padding: 10px;
+        margin: 5px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    .button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin-top: 10px;
+        cursor: pointer;
+        border: none;
+        border-radius: 5px;
+    }
+    .reminder {
+        margin-top: 20px;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Medication Reminder</h2>
+    <div id="medicationInputs">
+        <input type="text" id="medicationName" placeholder="Medication Name">
+        <input type="time" id="medicationTime" placeholder="Reminder Time">
+        <button class="button" onclick="addMedication()">Add Medication</button>
+    </div>
+    <div class="reminder" id="reminder"></div>
+    <button class="button" onclick="clearReminders()">Clear Reminders</button>
+</div>
+
+<script>
+var reminders = [];
+
+function addMedication() {
+    var medicationName = document.getElementById("medicationName").value;
+    var medicationTime = document.getElementById("medicationTime").value;
+
+    if (medicationName && medicationTime) {
+        reminders.push({ name: medicationName, time: medicationTime });
+        updateReminderDisplay();
+    }
+}
+
+function updateReminderDisplay() {
+    var reminderDiv = document.getElementById("reminder");
+    reminderDiv.innerHTML = '';
+
+    reminders.forEach(function(reminder) {
+        var reminderText = 'Reminder for ' + reminder.name + ' at ' + reminder.time;
+        reminderDiv.innerHTML += '<p>' + reminderText + '</p>';
+        scheduleReminder(reminder.name, reminder.time);
+    });
+}
+
+function scheduleReminder(medicationName, medicationTime) {
+    var reminderTime = new Date();
+    var splitTime = medicationTime.split(":");
+    reminderTime.setHours(parseInt(splitTime[0], 10));
+    reminderTime.setMinutes(parseInt(splitTime[1], 10));
+
+    var currentTime = new Date();
+    if (reminderTime < currentTime) {
+        reminderTime.setDate(reminderTime.getDate() + 1); // Reminder for the next day
+    }
+
+    var timeDiff = reminderTime.getTime() - currentTime.getTime();
+
+    setTimeout(function() {
+        // Play alarm sound
+        var audio = new Audio('alarm.mp3');
+        audio.play();
+
+        // Show notification
+        if (Notification.permission === 'granted') {
+            var notification = new Notification('Medication Reminder', {
+                body: 'Time to take your ' + medicationName + '!',
+                icon: 'notification_icon.png' // Optional icon path
+            });
+        } else if (Notification.permission !== 'denied') {
+            Notification.requestPermission().then(function(permission) {
+                if (permission === 'granted') {
+                    var notification = new Notification('Medication Reminder', {
+                        body: 'Time to take your ' + medicationName + '!',
+                        icon: 'notification_icon.png' // Optional icon path
+                    });
+                }
+            });
+        }
+
+        // Show alert message as a fallback
+        alert('Time to take your ' + medicationName + '!');
+    }, timeDiff);
+}
+
+function clearReminders() {
+    reminders = [];
+    var reminderDiv = document.getElementById("reminder");
+    reminderDiv.innerHTML = '';
+}
+</script>
+
+</body>
+</html>
