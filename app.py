@@ -47,7 +47,7 @@ def register_user():
     # Redirect to login page after registration
     return redirect(url_for('login'))
 
-@app.route('/another_page')
+@app.route('/home')
 def another_page():
     return render_template("index.html")
 
